@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
+import { Box, CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import { CssBaseline, Container } from '@mui/material'
+import React from 'react'
 import theme from './theme'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -19,17 +19,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Container
-            maxWidth={false}
+          <Box
             sx={{
-              width: '100vw',
-              padding: 0,
-              display: 'flex',
-              justifyContent: 'center'
+              minHeight: '100vh',
+              width: '100%',
+              display: 'flex'
             }}
           >
             {children}
-          </Container>
+          </Box>
         </ThemeProvider>
       </body>
     </html>

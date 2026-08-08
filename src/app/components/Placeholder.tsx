@@ -4,8 +4,8 @@ const PlaceholderImage = () => {
   return (
     <Box
       sx={{
-        width: 90,
-        height: 50,
+        width: '100%',
+        aspectRatio: '9 / 5',
         backgroundColor: 'whitesmoke',
         display: 'flex',
         justifyContent: 'center',

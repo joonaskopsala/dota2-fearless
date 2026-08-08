@@ -1,9 +1,13 @@
+import { Skeleton } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Image from 'next/image'
 import { Dispatch, SetStateAction, useState } from 'react'
 import type { Hero } from '../util/entity'
-import Button from '@mui/material/Button'
-import Box from '@mui/material/Box'
-import { Skeleton } from '@mui/material'
+import {
+  hasLoadedHeroImage,
+  markHeroImageLoaded
+} from '../util/hero_image_cache'
 
 const Hero = ({
   hero,
@@ -20,7 +24,7 @@ const Hero = ({
   game2Bans: number[]
   setGame2Bans: Dispatch<SetStateAction<number[]>>
 }) => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(!hasLoadedHeroImage(hero.image))
 
   const isBanned =
     game1Bans.findIndex(b => b === hero.id) != -1 ||
@@ -44,32 +48,44 @@ const Hero = ({
     <Button
       onClick={handleClick}
       disabled={isBanned}
+      aria-label={`Ban ${hero.name} for game ${activeGame}`}
       sx={{
         position: 'relative',
         cursor: isBanned ? 'default' : 'pointer',
-        p: 0
+        p: 0,
+        minWidth: 0,
+        width: '100%',
+        borderRadius: 1,
+        overflow: 'hidden',
+        transition: 'transform 0.18s ease',
+        '&:hover': {
+          transform: isBanned ? 'none' : 'translateY(-1px)'
+        }
       }}
     >
       <Box
         sx={{
           position: 'relative',
-          width: 90,
-          height: 50,
+          width: '100%',
+          aspectRatio: '9 / 5',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          borderRadius: 1
         }}
       >
         {isLoading && (
           <Skeleton
             variant="rectangular"
-            width={90}
-            height={50}
+            width="100%"
+            height="100%"
             sx={{
               position: 'absolute',
               zIndex: 3,
-              borderRadius: '0.3rem'
+              inset: 0,
+              borderRadius: 1,
+              transform: 'none'
             }}
           />
         )}
@@ -78,14 +94,16 @@ const Hero = ({
           height={50}
           src={hero.image}
           alt={hero.name}
-          onLoad={() => setIsLoading(false)}
+          onLoad={() => {
+            markHeroImageLoaded(hero.image)
+            setIsLoading(false)
+          }}
           style={{
             position: 'absolute',
             inset: 0,
             objectFit: 'cover',
             zIndex: isBanned ? 1 : 0,
             filter: isBanned ? 'blur(3px)' : 'none',
-            transition: 'filter 0.5s ease',
             borderRadius: '0.3rem',
             opacity: isLoading ? 0 : 1,
             transitionProperty: 'filter, opacity',
